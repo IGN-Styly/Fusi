@@ -1,27 +1,36 @@
+use colored::Colorize;
 use std::process::Command;
 
 // TODO  add autoremove command : LINE 70
 // TODO add a help command that lists commands and names their Functions
 
 fn run(cmd: &str, args: &[&str]) {
-    Command::new(cmd).args(args).status().unwrap_or_else(|_| {
-        eprintln!("Failed to execute {}", cmd);
+    let status = Command::new(cmd).args(args).status().unwrap_or_else(|_| {
+        eprintln!("{}", format!("Failed to execute {}", cmd).red());
         std::process::exit(1);
     });
+
+    if status.success() {
+        println!("{}", "✔ Done!".green());
+    }
 }
 
 fn require_pkg(pkg: Option<&String>) -> &str {
     pkg.map(|s| s.as_str()).unwrap_or_else(|| {
-        eprintln!("Missing package name");
+        eprintln!("{}", "Missing package name".red());
         std::process::exit(1);
     })
 }
 
 fn main() {
+    colored::control::set_override(true);
     let args: Vec<String> = std::env::args().skip(1).collect();
 
     if args.is_empty() {
-        eprintln!("No command provided. Use: fusi <command>");
+        eprintln!(
+            "{}",
+            format!("No command provided. Use: fusi <command>").red()
+        );
         std::process::exit(1);
     }
 
@@ -58,7 +67,26 @@ fn main() {
 
         // fusi details
         "details" => {
-            println!("Wip");
+            // HOLY SHIT IM SO SORRY FOR THE FORMATING WHEN I SAVE IT IT DOES THIS
+            println!(
+                "{}",
+                r#"
+            ███████╗██╗   ██╗███████╗██╗
+            ██╔════╝██║   ██║██╔════╝██║
+            █████╗  ██║   ██║███████╗██║
+            ██╔══╝  ██║   ██║╚════██║██║
+            ██║     ╚██████╔╝███████║██║                
+            ╚═╝      ╚═════╝ ╚══════╝╚═╝
+                "#
+                .cyan()
+                .bold()
+            );
+            println!(
+                "{}",
+                "A Tool to help beginners use the Terminal for Arch-based distros".white()
+            );
+            println!("{}", "Version: 0.1.0".white());
+            println!("{}", "© 2025 fusiontech21 — AGPL-3.0".white());
         }
 
         // upgrades a pkg
@@ -93,11 +121,118 @@ fn main() {
         // shows amount of pkgs installed
         "stats" => run("pacman", &["-Qq"]),
 
+        // Help command idk what to say
+        "help" => {
+            println!("{}", "Fusi - Available Commands".cyan().bold());
+            println!("{}", "─────────────────────────────────────────".cyan());
+            println!(
+                "{} {}",
+                "fusi install <pkg>".green().bold(),
+                "→ Install a package"
+            ); // AGAIN SORRY FOR THE FORMATING
+            println!(
+                "{} {}",
+                "fusi remove <pkg>".green().bold(),
+                "→ Remove a package (full cleanup)"
+            );
+            println!(
+                "{} {}",
+                "fusi softremove <pkg>".green().bold(),
+                "→ Remove just the package"
+            );
+            println!(
+                "{} {}",
+                "fusi search <pkg>".green().bold(),
+                "→ Search for a package"
+            );
+            println!(
+                "{} {}",
+                "fusi update".green().bold(),
+                "→ Update the entire system"
+            );
+            println!(
+                "{} {}",
+                "fusi upgrade <pkg>".green().bold(),
+                "→ Upgrade a specific package"
+            );
+            println!(
+                "{} {}",
+                "fusi downgrade <pkg>".green().bold(),
+                "→ Downgrade a package"
+            );
+            println!(
+                "{} {}",
+                "fusi info <pkg>".green().bold(),
+                "→ Show info about a package"
+            );
+            println!(
+                "{} {}",
+                "fusi installed <pkg>".green().bold(),
+                "→ Check if a package is installed"
+            );
+            println!(
+                "{} {}",
+                "fusi list".green().bold(),
+                "→ List explicitly installed packages"
+            );
+            println!(
+                "{} {}",
+                "fusi listall".green().bold(),
+                "→ List all installed packages"
+            );
+            println!(
+                "{} {}",
+                "fusi files <pkg>".green().bold(),
+                "→ Show files owned by a package"
+            );
+            println!(
+                "{} {}",
+                "fusi owner <file>".green().bold(),
+                "→ Show which package owns a file"
+            );
+            println!(
+                "{} {}",
+                "fusi deps <pkg>".green().bold(),
+                "→ Show dependencies of a package"
+            );
+            println!(
+                "{} {}",
+                "fusi stats".green().bold(),
+                "→ Show how many packages are installed"
+            );
+            println!(
+                "{} {}",
+                "fusi log".green().bold(),
+                "→ Show pacman install history"
+            );
+            println!(
+                "{} {}",
+                "fusi mirrors".green().bold(),
+                "→ Update your mirrorlist"
+            );
+            println!(
+                "{} {}",
+                "fusi unlock".green().bold(),
+                "→ Remove pacman lock file"
+            );
+            println!(
+                "{} {}",
+                "fusi details".green().bold(),
+                "→ Show info about fusi"
+            );
+            println!("{}", "─────────────────────────────────────────".cyan());
+            println!("{}", "© 2025 fusiontech21 — AGPL-3.0".white());
+        }
+
         // anything else
         _ => {
             println!(
-                "unknown command ( {} ) type fusi help to list all Commands",
-                cmd
+                "{}",
+                format!(
+                    "Unknown Command ({}) Type fusi help to list all Commands",
+                    cmd
+                )
+                .yellow() // SORRY FOR THE TRASH FORMATTING WHEN I SAVE IT AUTO DOES THIS
             );
         }
     }

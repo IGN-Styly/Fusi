@@ -95,11 +95,11 @@ fn main() {
         "search" => run(false, vec!["pacman", "-Ss", require_pkg(pkg)]),
 
         // Updates the system
-        "update" => run(true, vec!["pacman", "-Syu"]),
+        "update" => run(true, vec!["pacman", "-Syyu"]),
 
         // upgrades a pkg
         "upgrade" => {
-        let mut a = vec!["pacman", "-S"];
+        let mut a = vec!["pacman", "-Sy"];
         for p in &args[1..] { a.push(p.as_str()); }
         run(true, a);
         }

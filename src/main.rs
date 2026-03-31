@@ -44,6 +44,11 @@ fn main() {
         // fusi remove <package>
         "remove" => run("sudo", &["pacman", "-Rns", require_pkg(pkg)]),
 
+        // FUN
+        "secret" => {
+            let txt = args[1..].join(" ");
+            secrething(&txt);
+        }
         // searches for a package
         "search" => run("pacman", &["-Ss", require_pkg(pkg)]),
 
@@ -238,4 +243,21 @@ fn main() {
     }
 
     std::process::exit(0);
+}
+
+fn secrething(txt: &str) {
+    let colors = ["rd", "ylw", "grn", "cyn", "blue", "mgnt"];
+    for (i, ch) in txt.chars().enumerate() {
+        let clrs = match colors[i % colors.len()] {
+            "rd" => ch.to_string().red().bold(),
+            "ylw" => ch.to_string().yellow().bold(),
+            "grn" => ch.to_string().green().bold(),
+            "cyn" => ch.to_string().cyan().bold(),
+            "blue" => ch.to_string().blue().bold(),
+            "mgnt" => ch.to_string().magenta().bold(),
+            _ => ch.to_string().white().bold(),
+        };
+        print!("{}", clrs);
+    }
+    println!();
 }
